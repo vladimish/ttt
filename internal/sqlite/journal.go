@@ -53,3 +53,13 @@ func (s *Sqlite) GetRecord(name string) (res models.Record, err error) {
 
 	return res, nil
 }
+
+// DeleteRecord removes record by name.
+func (s *Sqlite) DeleteRecord(name string) error {
+	_, err := s.conn.Exec("DELETE FROM records WHERE name=?;", name)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

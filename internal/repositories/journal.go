@@ -9,4 +9,6 @@ type Journal interface {
 	GetUserRecords(user string) ([]models.Record, error)
 	// GetRecord returns a record by its name.
 	GetRecord(name string) (models.Record, error)
+	// DeleteRecord removes record by name.
+	DeleteRecord(name string) error
 }

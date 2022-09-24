@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -14,7 +15,7 @@ func (a *App) executor(in string) {
 	switch cmd[0] {
 	case "start":
 		if len(cmd) > 3 {
-			fmt.Println("Invalid number of arguments")
+			fmt.Println("invalid number of arguments")
 			return
 		}
 
@@ -27,11 +28,11 @@ func (a *App) executor(in string) {
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			fmt.Println("Task started successfully")
+			fmt.Println("task started successfully")
 		}
 	case "stop":
 		if len(cmd) != 2 {
-			fmt.Println("Invalid number of arguments")
+			fmt.Println("invalid number of arguments")
 			return
 		}
 
@@ -39,11 +40,53 @@ func (a *App) executor(in string) {
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			fmt.Println("Task stopped successfully")
+			fmt.Println("task stopped successfully")
+		}
+	case "add":
+		if len(cmd) == 3 {
+			cmd = append(cmd, "")
+		} else if len(cmd) != 4 {
+			fmt.Println("invalid number of arguments")
+			return
+		}
+
+		start, err := strconv.Atoi(cmd[1])
+		if err != nil {
+			fmt.Println("start must be an integer")
+			return
+		}
+
+		end, err := strconv.Atoi(cmd[2])
+		if err != nil {
+			fmt.Println("end must be an integer")
+			return
+		}
+
+		err = a.d.Start(cmd[0], cmd[3], int64(start))
+		if err != nil {
+			fmt.Printf("can't start task: %s\n", err.Error())
+			return
+		}
+
+		err = a.d.End(cmd[0], int64(end))
+		if err != nil {
+			fmt.Printf("can't start task: %s\n", err.Error())
+			return
+		}
+	case "delete":
+		if len(cmd) != 1 {
+			fmt.Println("invalid number of arguments")
+			return
+		}
+
+		err := a.d.Delete(cmd[0])
+		if err != nil {
+			fmt.Printf("can't delete record: %s\n", err.Error())
+			return
 		}
 	case "list":
 		if len(cmd) != 1 {
-			fmt.Println("Invalid number of arguments")
+			fmt.Println("invalid number of arguments")
 			return
 		}
 
@@ -72,8 +115,7 @@ func (a *App) completer(in prompt.Document) []prompt.Suggest {
 	s := []prompt.Suggest{
 		{Text: "start", Description: "Start task with specified name and optional description"},
 		{Text: "stop", Description: "Stop task by name"},
-		{Text: "add", Description: "Add a new custom record with the given name, start and end (UNIX time)"},
-		{Text: "edit", Description: "Edit task by name, start and end (UNIX time)"},
+		{Text: "add", Description: "Add a new custom record with the given name, start, end (UNIX time) and optional description."},
 		{Text: "delete", Description: "Delete task by name"},
 		{Text: "list", Description: "List all tasks"},
 		{Text: "export", Description: "Export tasks to CSV file"},

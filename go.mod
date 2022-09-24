@@ -1,6 +1,6 @@
 module github.com/vladimish/ttt
 
-go 1.19
+go 1.17
 
 require (
 	github.com/c-bata/go-prompt v0.2.6
